@@ -43,6 +43,10 @@ input {
     background-color: #4CAF50;
 }
 
+.reset {
+    background-color: #FF3B3B;  /* 红色 */
+}
+
 ul {
     list-style-type: none;
     padding: 0;

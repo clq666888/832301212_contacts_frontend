@@ -1,7 +1,8 @@
 const API_URL = "http://127.0.0.1:5000/contacts";
 
-async function loadContacts() {
-    const res = await fetch(API_URL);
+async function loadContacts(search="") {
+    const url = search ? `${API_URL}?search=${encodeURIComponent(search)}` : API_URL;
+    const res = await fetch(url);
     const data = await res.json();
     const list = document.getElementById("contactList");
     list.innerHTML = "";
@@ -22,16 +23,12 @@ async function loadContacts() {
 async function addContact() {
     const name = document.getElementById("name").value.trim();
     const phone = document.getElementById("phone").value.trim();
-
-    if (!name || !phone) {
-        alert("Please enter name and phone");
-        return;
-    }
+    if (!name || !phone) { alert("Please enter name and phone"); return; }
 
     await fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, email: "" })
+        body: JSON.stringify({ name, phone })
     });
 
     document.getElementById("name").value = "";
@@ -51,11 +48,16 @@ function editContact(id, name, phone) {
         fetch(`${API_URL}/${id}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: newName, phone: newPhone, email: "" })
+            body: JSON.stringify({ name: newName, phone: newPhone })
         }).then(() => loadContacts());
     }
 }
 
 document.getElementById("addBtn").onclick = addContact;
+document.getElementById("searchBtn").onclick = () => loadContacts(document.getElementById("searchInput").value);
+document.getElementById("resetBtn").onclick = () => {
+    document.getElementById("searchInput").value = "";
+    loadContacts();
+};
 
 loadContacts();
